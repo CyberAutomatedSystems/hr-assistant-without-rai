@@ -1,0 +1,128 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "description": "Deploys Azure OpenAI Service for HR Assistant WITHOUT RAI demo"
+  },
+  "parameters": {
+    "openAIServiceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure OpenAI service (must be globally unique)"
+      },
+      "defaultValue": "[concat('openai-hr-demo-', uniqueString(resourceGroup().id))]"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location for all resources"
+      },
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "eastus",
+        "eastus2",
+        "westus",
+        "westus2",
+        "westeurope",
+        "northeurope",
+        "southcentralus",
+        "swedencentral"
+      ]
+    },
+    "modelDeploymentName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for the GPT-4o deployment"
+      },
+      "defaultValue": "gpt-4o"
+    },
+    "modelName": {
+      "type": "string",
+      "metadata": {
+        "description": "Model to deploy"
+      },
+      "defaultValue": "gpt-4o",
+      "allowedValues": [
+        "gpt-4o",
+        "gpt-4o-mini"
+      ]
+    },
+    "modelVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Model version"
+      },
+      "defaultValue": "2024-08-06"
+    },
+    "modelCapacity": {
+      "type": "int",
+      "metadata": {
+        "description": "Tokens per minute (TPM) capacity in thousands"
+      },
+      "defaultValue": 10,
+      "minValue": 1,
+      "maxValue": 100
+    }
+  },
+  "variables": {
+    "openAIApiVersion": "2024-06-01-preview"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2024-04-01-preview",
+      "name": "[parameters('openAIServiceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "S0"
+      },
+      "kind": "OpenAI",
+      "properties": {
+        "customSubDomainName": "[parameters('openAIServiceName')]",
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2024-04-01-preview",
+      "name": "[concat(parameters('openAIServiceName'), '/', parameters('modelDeploymentName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('openAIServiceName'))]"
+      ],
+      "sku": {
+        "name": "Standard",
+        "capacity": "[parameters('modelCapacity')]"
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "[parameters('modelName')]",
+          "version": "[parameters('modelVersion')]"
+        },
+        "raiPolicyName": "Microsoft.DefaultV2"
+      }
+    }
+  ],
+  "outputs": {
+    "openAIEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('openAIServiceName')), '2024-04-01-preview').endpoint]"
+    },
+    "openAIServiceName": {
+      "type": "string",
+      "value": "[parameters('openAIServiceName')]"
+    },
+    "modelDeploymentName": {
+      "type": "string",
+      "value": "[parameters('modelDeploymentName')]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    },
+    "instructions": {
+      "type": "string",
+      "value": "Get your API key from: Azure Portal → Your OpenAI Resource → Keys and Endpoint"
+    }
+  }
+}
