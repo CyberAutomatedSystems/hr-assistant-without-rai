@@ -54,27 +54,28 @@ This guide walks you through deploying Azure OpenAI Service using the Azure Port
 
 1. **Open Azure OpenAI Studio**
    - In your OpenAI resource, look for "Overview" page
-   - Click the button "Go to Azure OpenAI Studio"
-   - Or click "Model deployments" → "Manage Deployments"
+   - Click the button "Explore Foundry portal"
+   - Or click "Go to Foundry Portal" 
 
 2. **Create New Deployment**
-   - In Azure OpenAI Studio, click "Deployments" in the left menu
-   - Click "+ Create new deployment"
+   - In Azure Microsoft Foundry | OpenAI Studio, click "Deployments" in the left menu under Shared resources
+   - Click "+ Deploy model" then "deploy base model"
 
 3. **Configure Model Deployment**
-   - **Select a model**: Choose `gpt-4o` (or `gpt-4o-mini` for lower cost)
+   - **Select a model**: Choose `gpt-4o` (or `gpt-4o-mini` for lower cost) then click confirm
    - **Deployment name**: `gpt-4o`
-   - **Model version**: `Auto-update to default`
-   - **Deployment type**: `Standard`
+   - **Deployment type**: `standard`
+   - **Deployment details**: click customize
+      - **Model version**: `Upgrade once new default version becomes available`
    - **Tokens per minute rate limit**: Leave default (e.g., 10K)
 
 4. **Create Deployment**
-   - Click "Create"
+   - Click "Deploy"
    - Wait ~30 seconds for deployment
 
 5. **Verify Deployment**
    - You should see your deployment listed
-   - Status should show "Succeeded"
+   - Status should shw "Succeeded"
 
 ---
 
@@ -82,8 +83,8 @@ This guide walks you through deploying Azure OpenAI Service using the Azure Port
 
 1. **Get Endpoint**
    - Go back to Azure Portal (portal.azure.com)
-   - Navigate to your OpenAI resource: `openai-hr-demo-[yourname]`
-   - Click "Keys and Endpoint" in the left menu
+   - Navigate to your OpenAI resource: `rg-hr-assistant-demo`
+   - Click "Keys and Endpoint" in the left menu under the 'Resource Management" tab
    - **Copy the Endpoint** (looks like: `https://openai-hr-demo-yourname.openai.azure.com/`)
 
 2. **Get API Key**
